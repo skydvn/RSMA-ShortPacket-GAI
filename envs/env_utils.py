@@ -2,7 +2,7 @@ import numpy as np
 from utils.setting_setup import *
 import scipy
 
-class env_utils():
+class rsma_utils():
     def __init__(self):
         pass
 
