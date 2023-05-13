@@ -1,0 +1,2 @@
+# RSMA-ShortPacket-GAI
+ 
