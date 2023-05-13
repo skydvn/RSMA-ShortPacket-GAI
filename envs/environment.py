@@ -8,28 +8,13 @@ from envs.env_utils import *
 from envs.env_agent_utils import *
 
 
-class base_env(env_utils, env_agent_utils):
+class base_env(rsma_utils, env_agent_utils):
     def __init__(self, args):
         # Network setting
-        self.noise = args.noise
-        self.lamda = args.lamda
-        self.N_User = args.user_num
-        self.G_CU_list = np.ones((self.N_User, 1))  # User directivity
-        self.G_BS_t = 1  # BS directivity
-        self.Z_u = 10000  # Data size
-        self.Num_BS = 1  # Number of Base Stations
-        self.N_User = 10  # Number of Users
-        self.max_step = args.max_step
+
 
         # Power setting
-        self.P = args.power
-        self.P_u_max = args.poweru_max
-        self.P_0 = args.power0
-        self.Pn = args.powern
-        self.eta = 0.7  # de tinh R_u
-        self.sigma = 3.9811 * (np.e ** (-21 + 7))  # -174 dBm/Hz -> W/Hz
-        # Bandwidth
-        self.B = args.bandwidth
+
 
         # Base station initialization
         self.BS_x = 0
@@ -101,4 +86,4 @@ class base_env(env_utils, env_agent_utils):
 
 if __name__ == '__main__':
     args = get_arguments()
-    env = DRGO_env(args)
+    env = base_env(args)
