@@ -11,8 +11,8 @@ def print_hi(name):
 if __name__ == '__main__':
     args = get_arguments()
 
-    env = DRGO_env(args)
-    agent = GAI_agent(args)
+    env = base_env(args)
+    agent = base_agent(args)
 
     if flag_train == True:
         agent.train()
