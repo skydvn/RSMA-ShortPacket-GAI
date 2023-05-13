@@ -57,39 +57,17 @@ class base_env(env_utils, env_agent_utils):
         self.action_space = self._wrapAction()
 
     def step(self, action, step):
-        # Environment change
+        """     Environment change      """
         self.User_trajectory = np.expand_dims(self._trajectory_U_Generator(), axis=0)
         self.U_location = self.User_trajectory + self.U_location
-        # State wrap
-        state_next = self._wrapState()
-        # Re-calculate channel gain
+
+        """     Re-calculate channel gain     """
         self.ChannelGain = self._ChannelGain_Calculated(self.sigma_data)
+        state_next = self._wrapState()
+        """     Reward      """
+        reward = None
 
-        self.T = self._Time()  # Generate self.T
-        # Calculate distortion rate
-        sigma_data = self.sigma_data
-
-        # We assume that it follows CLT
-        # This function can be changed in the future
-        temp_c = 20
-        sigma_sem = np.exp(temp_c * (1 - self.o) ** 2)
-        sigma_tot_sqr = 1 / ((1 / sigma_sem ** 2) + (1 / sigma_data ** 2))
-
-        # Goal-oriented penalty
-        if self.semantic_mode == "learn":
-            penalty = max(np.sum((self.eta ** 2 * self.Lipschitz / 2 - self.eta) * \
-                                 (self.Lipschitz ** 2) * sigma_tot_sqr - self.acc_threshold), 0)
-        else:
-            penalty = max(np.sum(
-                (1 / math.sqrt(2 * math.pi)) * self.inf_capacity * np.exp(-1 / (4 * (self.B ** 2) * sigma_tot_sqr))), 0)
-        # print(f"penalty: {penalty}")
-        reward = - self.T - self.pen_coeff * penalty
-        print(f"step: {step} --> rew: {reward} | T: {self.T}| pena: {penalty}")
-        """
-        T = 100 
-        - Normally, the constraint * penalty should be around 0.01 - 0.2 of T
-        - Print and observe the distribution of the constraints -> decide the alpha
-        """
+        """     info|done      """
         if step == self.max_step:
             done = True
         else:
@@ -102,7 +80,7 @@ class base_env(env_utils, env_agent_utils):
         # Base station initialization
         self.BS_location = np.expand_dims(self._location_BS_Generator(), axis=0)
 
-        # Use initialization
+        """     Use initialization      """
         # self.U_location = np.expand_dims(self._location_CU_Generator(), axis=0)
         # self.User_trajectory = np.expand_dims(self._trajectory_U_Generator(), axis=0)
         self.U_location = self._location_CU_Generator()
