@@ -1,5 +1,5 @@
 # The official implementation of the paper: 
-"RSMA-Assisted THz-based Short-Packet Communications: Model-based Analysis and a Generative AI Approach"\\
+"RSMA-Assisted THz-based Short-Packet Communications: Model-based Analysis and a Generative AI Approach" \
 Thai-Hoc Vu, Duong-Minh Nguyen, Quoc-Viet Pham, Daniel Benevides da Costa, and Sunghwan Kim
 
 # Citation
