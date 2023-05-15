@@ -77,8 +77,8 @@ def get_arguments():
     parser.add_argument("--rate-private", type=float, default=0.75,
                         help="rate for private packet")
 
-
-
+    parser.add_argument("--imperfect-sic", type=float, default=0.1,
+                        help="imperfect SIC coefficient")
 
 
     """ ======================================================== """
@@ -88,23 +88,14 @@ def get_arguments():
                         help="size of the replay memory")
     parser.add_argument("--batch-size", type=int, default=128,
                         help="data batch size")
-    parser.add_argument("--ou-theta", type=float, default=1.0,
-                        help="ou noise theta")
-    parser.add_argument("--ou-sigma", type=float, default=0.1,
-                        help="ou noise sigma")
+
     parser.add_argument("--initial-steps", type=int, default=1e4,
                         help="initial random steps")
-    parser.add_argument("--gamma", type=float, default=0.99,
-                        help="discount factor")
-    parser.add_argument("--tau", type=float, default=5e-3,
-                        help="initial random steps")
+
     parser.add_argument("--max-episode", type=int, default=100,
                         help="max episode")
     parser.add_argument("--max-step", type=int, default=500,
                         help="max number of step per episode")
-    parser.add_argument("--semantic-mode", type=str, default="learn",
-                        help="learn | infer")
-    parser.add_argument("--pen-coeff", type=float, default=0,
-                        help="coefficient for penalty")
+
 
     return parser.parse_args()
