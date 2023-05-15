@@ -17,7 +17,9 @@ def get_arguments():
                         help="Path to the mnist dataset")
     parser.add_argument("--exp-dir", type=Path, default="D:/Github/1-RepresentationLearning/IVAE/experiments",
                         help="Path to the experiment folder, where all logs/checkpoints will be stored")
-    parser.add_argument("--flag-train", type=bool, default=True,
+    parser.add_argument("--flag-d-collect", type=bool, default=True,
+                        help="Trigger for training")
+    parser.add_argument("--flag-train", type=bool, default=False,
                         help="Trigger for training")
     parser.add_argument("--flag-eval", type=bool, default=False,
                         help="Trigger for evaluation")
