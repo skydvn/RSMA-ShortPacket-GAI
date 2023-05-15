@@ -82,10 +82,15 @@ class base_env(rsma_utils, env_agent_utils):
         self.rewardMatrix = np.array([])
         self.observation_space = self._wrapState().squeeze()
 
-    def step(self):
+    def step(self,step):
         """     Environment change      """
         self.User_trajectory = np.expand_dims(self._trajectory_U_Generator(), axis=0)
         self.U_location = self.User_trajectory + self.U_location
+
+        idx_ptdb = 0
+        bar_gamma = dB2pow(self.PTdB(idx_ptdb))
+        count_sim_c = np.zeros((1,self.user_num))
+        count_sim_k = np.zeros((1,self.user_num))
 
         for user in range(self.user_num):
             for trial in range(self.trial):
@@ -100,20 +105,25 @@ class base_env(rsma_utils, env_agent_utils):
                 """     P = [p1,p2,...,pK]      """
                 self.P_precoding = self.W_precoding*np.diag(np.linalg.norm(self.G_nagakami))
                 # Generate precoding weights for private message (Trial*L*1)
-                self.P_k = self.P_precoding[:,k]
+                self.P_k = self.P_precoding[:,user]
                 # Generate precoding weight for common message (Trial*L*1)
                 self.P_c = np.concatenate(2,self.P_precoding)*T_conjugate(np.ones((1,self.user_num)))
                 # Channel of user k (Trial,Antenna,1)
-                self.G_k = self.G_nagakami[:,k]
+                self.G_k = self.G_nagakami[:,user]
                 # Expect to channel norm - common |gk^h*pc|^2
                 self.gkhpc = np.pow(np.abs(T_conjugate(self.G_k)*self.P_c),2)
                 # Expect to channel norm - private |gk^h*pk|^2
-`               self.gkhpk = np.pow(np.abs(T_conjugate(self.G_k)*self.P_k),2)
+                self.gkhpk = np.pow(np.abs(T_conjugate(self.G_k)*self.P_k),2)
                 # Channel of other user j (L*(K-1))
+                G_j = self.G_nagakami   # temporary channel
+                G_j[:,user] = []           # remove channel of user k
 
                 # Channel interference vector of other user |gj^h*pk|^2
+                g_j = np.pow(np.abs(T_conjugate(G_j)*self.P_k),2)
 
                 # SINR at user k
+                self.gamma_kc = self.beta_c*bar_gamma
+                self.gamma_kp = self.beta_k*bar_gamma
 
 
 
