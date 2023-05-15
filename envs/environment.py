@@ -82,6 +82,9 @@ class base_env(rsma_utils, env_agent_utils):
         self.rewardMatrix = np.array([])
         self.observation_space = self._wrapState().squeeze()
 
+        self.cdf_sim_c = []
+        self.cdf_sim_k = []
+
     def step(self,step):
         """     Environment change      """
         self.User_trajectory = np.expand_dims(self._trajectory_U_Generator(), axis=0)
@@ -125,7 +128,8 @@ class base_env(rsma_utils, env_agent_utils):
                 self.gamma_kc = self.beta_c*bar_gamma
                 self.gamma_kp = self.beta_k*bar_gamma
 
-
+            self.cdf_sim_c.append(1-count_sim_c[self.user_num]+1)
+            self.cdf_sim_k.append(1-count_sim_k[self.user_num]+1)
 
 
         """     Re-calculate channel gain     """
