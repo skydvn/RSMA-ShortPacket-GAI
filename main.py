@@ -1,4 +1,9 @@
 from agents.base_agent import *
+from agents.GAI.VAE import *
+from agents.GAI.LICE import *
+from agents.GAI.AE import *
+from agents.GAI.GAN import *
+
 from utils.setting_setup import *
 from envs.environment import *
 
@@ -11,12 +16,16 @@ def print_hi(name):
 if __name__ == '__main__':
     args = get_arguments()
 
+    alg = VAE()
     env = base_env(args)
-    agent = base_agent(args)
+    agent = base_agent(args,
+                       env,
+                       alg)
 
-    if flag_train == True:
+    if args.flag_train == True:
         agent.train()
-    if flag_eval == True:
+    if args.flag_eval == True:
         agent.evaluate()
-    # En
+
+
 
