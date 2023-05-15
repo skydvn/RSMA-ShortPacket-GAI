@@ -19,21 +19,20 @@ class base_env(rsma_utils, env_agent_utils):
         """ ========================================= """
         """ =============     Network    ============ """
         """ ========================================= """
-        self.antenna_num = args.antenna_num # Number of antenna setting
-        self.user_num = args.user_num       # Number of users
-        self.bandwidth = self.bandwidth     # Bandwidth in (MHz)
-        self.NFdB = args.NFdB               # From 280 GHz ~ 330 GHz
+        self.antenna_num = args.antenna_num     # Number of antenna setting
+        self.user_num = args.user_num           # Number of users
+        self.bandwidth = args.bandwidth         # Bandwidth in (MHz)
+        self.NFdB = args.NFdB                   # From 280 GHz ~ 330 GHz
 
         self.PTdB = np.arange(0,20,2.5)
         self.PTdB1 = np.arange(min(self.PTdB),max(self.PTdB),1)
 
         self.sig2dBm = -174 + 10*np.log10(self.bandwidth) + self.NFdB   # Noise power (dBm)
-        # Carrier Frequency (GHz) - 300 GHz
-        self.carrier_freq = args.carrier_freq
-        # Absorption Loss Coefficient Measured at 300 Ghz
-        self.kabs = args.kabs
-        # Antenna Gain of Tx
-        # Antenna Gain of Tx
+        self.carrier_freq = args.carrier_freq   # Carrier Frequency (GHz) - 300 GHz
+        self.kabs = args.kabs                   # Absorption Loss Coefficient Measured at 300 Ghz
+
+        self.G_Tx = np.log10(args.tx_db)        # Antenna Gain of Tx
+        self.G_Rx = np.log10(args.rx_db)        # Antenna Gain of Rx
 
         # Radius of cell-in
         # Radius of cell-out
