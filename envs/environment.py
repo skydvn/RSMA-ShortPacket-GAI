@@ -100,11 +100,11 @@ class base_env(rsma_utils, env_agent_utils):
         for user in range(self.user_num):
             for trial in range(self.trial):
                 """      Variable Initialization      """
-                self.m_k = 3
-                self.omega_k = 0.5
+                self.m_k = 3            # 1->4
+                self.omega_k = 0.5      # 1
 
                 # Nagakami Channel
-                self.G_nagakami = np.linspace(scipy.stats.nakagami())
+                self.G_nagakami = np.linspace(scipy.stats.nakagami())   # integer
                 # Precoding weights
                 self.W_precoding = self.G_nagakami*np.linalg.inv(T_conjugate(self.G_nagakami)*self.G_nagakami)
                 """     P = [p1,p2,...,pK]      """
@@ -112,7 +112,7 @@ class base_env(rsma_utils, env_agent_utils):
                 # Generate precoding weights for private message (Trial*L*1)
                 self.P_k = self.P_precoding[:,user]
                 # Generate precoding weight for common message (Trial*L*1)
-                self.P_c = np.concatenate(2,self.P_precoding)*T_conjugate(np.ones((1,self.user_num)))
+                self.P_c = np.concatenate((2,self.P_precoding),axis=0)*T_conjugate(np.ones((1,self.user_num)))
                 # Channel of user k (Trial,Antenna,1)
                 self.G_k = self.G_nagakami[:,user]
                 # Expect to channel norm - common |gk^h*pc|^2
