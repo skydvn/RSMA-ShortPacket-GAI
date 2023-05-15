@@ -44,24 +44,30 @@ def get_arguments():
     """ ======================================================== """
     """ ================== Environment config ================== """
     """ ======================================================== """
-    parser.add_argument("--noise", type=float, default=0.01,
-                        help="network noise")
-    parser.add_argument("--user-num", type=int, default=10,
+    parser.add_argument("--antenna-num", type=int, default=8,
+                        help="number of antenna")
+    parser.add_argument("--user-num", type=int, default=2,
                         help="number of users")
-    parser.add_argument("--lamda", type=float, default=0.001,
-                        help="signal wave length")
-    parser.add_argument("--power", type=float, default=1,
-                        help="max power of BS threshold")
-    parser.add_argument("--poweru_max", type=float, default=10,
-                        help="max power of user threshold")
-    parser.add_argument("--power0", type=float, default=1,
-                        help="power of BS")
-    parser.add_argument("--powern", type=float, default=1,
-                        help="power of users")
-    parser.add_argument("--bandwidth", type=float, default=100,
+    parser.add_argument("--bandwidth", type=float, default=100*1e6,
                         help="signal bandwidth")
+    parser.add_argument("--nfdb", type=float, default=6.5,
+                        help="NFdB")
+    parser.add_argument("--", type=int, default=10,
+                        help="number of users")
+    parser.add_argument("--carrier-freq", type=float, default=300*1e9,
+                        help="carrier frequency in GHz (300 GHz)")
+    parser.add_argument("--kabs", type=float, default=0.0033,
+                        help="absorption loss coefficient measured at 300 GHz")
 
+    parser.add_argument("--tx-db", type=float, default=3,
+                        help="rx antenna gain in dB")
+    parser.add_argument("--rx-db", type=float, default=0,
+                        help="rx antenna gain in dB")
 
+    parser.add_argument("--radius-in", type=float, default=0,
+                        help="radius of cell-in")
+    parser.add_argument("--radius-out", type=float, default=10,
+                        help="radius of cell-out")
 
 
     """ ======================================================== """
