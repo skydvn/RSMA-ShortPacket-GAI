@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
 from utils.result_utils import *
 
+from Modules.buffer import *
+
 class base_agent:
     def __init__(
             self,
@@ -10,22 +12,24 @@ class base_agent:
             env,
             alg
     ):
+        self.obs_dim = []
         self.env = env
         self.model = alg
         self.max_episode = args.max_episode
         self.max_step    = args.max_step
+        self.memory_size = args.memory_size
+        self.batch_size  = args.batch_size
+        self.memory = ReplayBuffer(self.obs_dim,self.memory_size,self.batch_size)
 
-
-    def step(self, action: np.ndarray) -> Tuple[np.ndarray, np.float64, bool]:
+    def step(self):
         """Take an action and return the response of the env."""
         """
             state / state_next: matrix of 
         """
-        state_next, reward, done, info = self.env.step(action, self.total_step)
-        # print(f"reward: {reward}")
+        state_next, reward, done, info = self.env.step(self.total_step)
+
         if not self.is_test:
             self.transition += [reward, state_next, done]
-            # print(self.transition)
             self.memory.store(*self.transition)
 
         return state_next, reward, done, info
@@ -42,8 +46,7 @@ class base_agent:
 
             for step in range(1, num_frames + 1):
                 """ get channel in terms of state """
-                state, reward, done, info = self.env.step()
-                """  """
+                state_next, reward, done, info = self.step()
 
     def train(self):
         # Get data from dataset
