@@ -96,6 +96,7 @@ def get_arguments():
                         help="max episode")
     parser.add_argument("--max-step", type=int, default=500,
                         help="max number of step per episode")
-
+    parser.add_argument("--trial", type=int, default=1,
+                        help="number of trial (samplings)")
 
     return parser.parse_args()
