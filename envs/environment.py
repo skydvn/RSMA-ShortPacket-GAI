@@ -10,6 +10,8 @@ from envs.env_agent_utils import *
 
 class base_env(rsma_utils, env_agent_utils):
     def __init__(self, args):
+        self.max_step = args.max_step
+        self.max_episode = args.max_episode
         # Base station initialization
         self.BS_x = 0
         self.BS_y = 0
@@ -49,38 +51,34 @@ class base_env(rsma_utils, env_agent_utils):
         self.g_k_threshold = \
             np.pow(2, self.rate_k)              # Threshold private
 
-        # Imperfect SIC coefficient
+        self.psik = args.imperfect_sic          # Imperfect SIC coefficient
 
 
         """ ========================================= """
         """ ========== Channel Realization ========== """
         """ ========================================= """
         # Channel Realization
-
-        # Random user-k location
-
-        # LSF * MAP part of channel hk
-
-        # Power setting
+        self.trial = 1e4
+        self.cdf_sim_c = []
+        self.cdf_sim_k = []
 
         """ ========================================= """
         """ ===== Function-based Initialization ===== """
         """ ========================================= """
-        self.BS_location = np.expand_dims(self._location_BS_Generator(), axis=0)
-        self.U_location = self._location_CU_Generator()
+        self.BS_location = np.expand_dims(self._location_BS_Generator(), axis=0)    # Random BS location
+        self.U_location = self._location_CU_Generator()                             # Random user-k location
         self.User_trajectory = self._trajectory_U_Generator()
         self.distance_CU_BS = self._distance_Calculated(self.U_location, self.BS_location)
 
         self.ChannelGain = self._ChannelGain_Calculated(self.sigma_data)
-        self.commonDataRate = self._calculateDataRate(self.ChannelGain)
-        self.T = 0  # initialize rewards)
+        # LSF * MAP part of channel hk
+        lk = np.exp(-np.mean())
 
         """ ============================ """
         """     Environment Settings     """
         """ ============================ """
         self.rewardMatrix = np.array([])
         self.observation_space = self._wrapState().squeeze()
-        self.action_space = self._wrapAction()
 
     def step(self, action, step):
         """     Environment change      """
