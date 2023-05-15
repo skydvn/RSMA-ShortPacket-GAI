@@ -6,3 +6,4 @@ def T_conjugate(input):
 
 def dB2pow(db_inp):
     return 0.001*np.pow(10,db_inp/10)
+
