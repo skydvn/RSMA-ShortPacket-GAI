@@ -13,6 +13,7 @@ class base_env(rsma_utils, env_agent_utils):
         super().__init__()
         self.max_step = args.max_step
         self.max_episode = args.max_episode
+        self.trial = args.trial
         # Base station initialization
         self.BS_x = 0
         self.BS_y = 0
@@ -81,36 +82,38 @@ class base_env(rsma_utils, env_agent_utils):
         self.rewardMatrix = np.array([])
         self.observation_space = self._wrapState().squeeze()
 
-    def step(self, action, step):
+    def step(self):
         """     Environment change      """
         self.User_trajectory = np.expand_dims(self._trajectory_U_Generator(), axis=0)
         self.U_location = self.User_trajectory + self.U_location
 
-        """      Variable Initialization      """
-        self.m_k = 3
-        self.omega_k = 0.5
+        for user in range(self.user_num):
+            for trial in range(self.trial):
+                """      Variable Initialization      """
+                self.m_k = 3
+                self.omega_k = 0.5
 
-        # Nagakami Channel
-        self.G_nagakami = None
-        # Precoding weights
-        self.W_precoding = self.G_nagakami*np.linalg.inv(T_conjugate(self.G_nagakami)*self.G_nagakami)
-        """     P = [p1,p2,...,pK]      """
-        self.P_precoding = self.W_precoding*np.diag(np.linalg.norm(self.G_nagakami))
-        # Generate precoding weights for private message (L*1)
-        self.P_k = self.P_precoding[:,k]
-        # Generate precoding weight for common message (L*1)
-        self.P_c = np.concatenate(2,self.P_precoding)*T_conjugate(np.ones((1,self.user_num)))
-        # Channel of user k (L*1)
+                # Nagakami Channel
+                self.G_nagakami = None
+                # Precoding weights
+                self.W_precoding = self.G_nagakami*np.linalg.inv(T_conjugate(self.G_nagakami)*self.G_nagakami)
+                """     P = [p1,p2,...,pK]      """
+                self.P_precoding = self.W_precoding*np.diag(np.linalg.norm(self.G_nagakami))
+                # Generate precoding weights for private message (Trial*L*1)
+                self.P_k = self.P_precoding[:,k]
+                # Generate precoding weight for common message (Trial*L*1)
+                self.P_c = np.concatenate(2,self.P_precoding)*T_conjugate(np.ones((1,self.user_num)))
+                # Channel of user k (Trial,Antenna,1)
+                self.G_k = self.G_nagakami[:,k]
+                # Expect to channel norm - common |gk^h*pc|^2
+                self.gkhpc = np.pow(np.abs(T_conjugate(self.G_k)*self.P_c),2)
+                # Expect to channel norm - private |gk^h*pk|^2
+`               self.gkhpk = np.pow(np.abs(T_conjugate(self.G_k)*self.P_k),2)
+                # Channel of other user j (L*(K-1))
 
-        # Expect to channel norm - common |gk^h*pc|^2
+                # Channel interference vector of other user |gj^h*pk|^2
 
-        # Expect to channel norm - private |gk^h*pk|^2
-
-        # Channel of other user j (L*(K-1))
-
-        # Channel interference vector of other user |gj^h*pk|^2
-
-        # SINR at user k
+                # SINR at user k
 
 
 
