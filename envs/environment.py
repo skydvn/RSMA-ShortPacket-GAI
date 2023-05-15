@@ -10,16 +10,28 @@ from envs.env_agent_utils import *
 
 class base_env(rsma_utils, env_agent_utils):
     def __init__(self, args):
+        # Base station initialization
+        self.BS_x = 0
+        self.BS_y = 0
+        self.BS_R_Range = 1
+        self.BS_R_min = 0.1
+
         """ ========================================= """
         """ =============     Network    ============ """
         """ ========================================= """
-        # Number of antenna setting
-        # Number of users
-        # Bandwidth in (MHz)
+        self.antenna_num = args.antenna_num # Number of antenna setting
+        self.user_num = args.user_num       # Number of users
+        self.bandwidth = self.bandwidth     # Bandwidth in (MHz)
+        self.NFdB = args.NFdB               # From 280 GHz ~ 330 GHz
 
-        # Noise power (dBm)
+        self.PTdB = np.arange(0,20,2.5)
+        self.PTdB1 = np.arange(min(self.PTdB),max(self.PTdB),1)
+
+        self.sig2dBm = -174 + 10*np.log10(self.bandwidth) + self.NFdB   # Noise power (dBm)
         # Carrier Frequency (GHz) - 300 GHz
+        self.carrier_freq = args.carrier_freq
         # Absorption Loss Coefficient Measured at 300 Ghz
+        self.kabs = args.kabs
         # Antenna Gain of Tx
         # Antenna Gain of Tx
 
@@ -48,13 +60,6 @@ class base_env(rsma_utils, env_agent_utils):
         # LSF * MAP part of channel hk
 
         # Power setting
-
-
-        # Base station initialization
-        self.BS_x = 0
-        self.BS_y = 0
-        self.BS_R_Range = 1
-        self.BS_R_min = 0.1
 
         """ ========================================= """
         """ ===== Function-based Initialization ===== """
