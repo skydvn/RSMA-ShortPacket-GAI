@@ -22,6 +22,8 @@ if __name__ == '__main__':
                        env,
                        alg)
 
+    if args.flag_d_collect == True:
+        agent.data_collect()
     if args.flag_train == True:
         agent.train()
     if args.flag_eval == True:
