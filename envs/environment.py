@@ -37,14 +37,17 @@ class base_env(rsma_utils, env_agent_utils):
         # Radius of cell-in
         # Radius of cell-out
 
-        # Power allocation
-        # Power allocation
+        self.beta_c = args.alloc_common         # Power allocation - common packet
+        self.beta_k = (1-self.beta_c)\
+                      /self.user_num            # Power allocation - private packet
 
-        # Rate common
-        # Rate private
+        self.rate_c = args.rate_common          # Rate common
+        self.rate_k = args.rate_private         # Rate private
 
-        # Threshold common
-        # Threshold private
+        self.g_c_threshold = \
+            np.pow(2,self.rate_c)               # Threshold common
+        self.g_k_threshold = \
+            np.pow(2, self.rate_k)              # Threshold private
 
         # Imperfect SIC coefficient
 
