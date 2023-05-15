@@ -33,6 +33,8 @@ class base_env(rsma_utils, env_agent_utils):
 
         self.sig2dBm = -174 + 10*np.log10(self.bandwidth) + self.NFdB   # Noise power (dBm)
         self.carrier_freq = args.carrier_freq   # Carrier Frequency (GHz) - 300 GHz
+
+        self.lamda = 3*1e8/self.carrier_freq    # Signal wavelength
         self.kabs = args.kabs                   # Absorption Loss Coefficient Measured at 300 Ghz
 
         self.G_Tx = np.log10(args.tx_db)        # Antenna Gain of Tx
@@ -102,7 +104,7 @@ class base_env(rsma_utils, env_agent_utils):
                 self.omega_k = 0.5
 
                 # Nagakami Channel
-                self.G_nagakami = None
+                self.G_nagakami = np.linspace(scipy.stats.nakagami())
                 # Precoding weights
                 self.W_precoding = self.G_nagakami*np.linalg.inv(T_conjugate(self.G_nagakami)*self.G_nagakami)
                 """     P = [p1,p2,...,pK]      """
@@ -128,6 +130,7 @@ class base_env(rsma_utils, env_agent_utils):
                 self.gamma_kc = self.beta_c*bar_gamma
                 self.gamma_kp = self.beta_k*bar_gamma
 
+            # cdf_sim_c & cdf_sim_k are the list
             self.cdf_sim_c.append(1-count_sim_c[self.user_num]+1)
             self.cdf_sim_k.append(1-count_sim_k[self.user_num]+1)
 
