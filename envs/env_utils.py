@@ -7,23 +7,15 @@ class rsma_utils():
         pass
 
 
-    def _channelGain_BS_CU(self):
-        """     Free-space path loss    """
-        numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)  # Directivity_BS * Directivity_CU * lambda
-        denominator = ((4 * np.pi) ** 3) * (self.distance_CU_BS ** 4)
-        channelGain = numerator / denominator
-        return channelGain
-
     def _location_BS_Generator(self):
         BS_location = [self.BS_x, self.BS_y]
-        # print(BS_location)
         return np.array(BS_location)
 
     # Iot initialization
     def _location_CU_Generator(self):
         userList = []
         # hUser_temp = 1.65
-        for i in range(self.N_User):
+        for i in range(self.num_user):
             r = self.BS_R_Range * np.sqrt(np.random.rand()) + self.BS_R_min
             theta = np.random.uniform(-np.pi, np.pi)
             xUser_temp = self.BS_x + r * np.cos(theta)
@@ -57,44 +49,11 @@ class rsma_utils():
 
     #       return dist
 
-    def _ChannelGain_Calculated(self, sigma_data):
-        numerator = self.G_BS_t * self.G_CU_list * (self.lamda ** 2)
-        denominator = (4 * np.pi * self.distance_CU_BS) ** 2
-        awgn_coeff = np.random.normal(1, sigma_data)
-        ChannelGain = (numerator*awgn_coeff) / denominator
-        # print(ChannelGain)
-        return np.array(ChannelGain)
+    def _ChannelGain_Calculated(self):
+
+        return None
 
     def _calculateDataRate(self, channelGain_BS_CU):
-        """
-        The SNR is measured by:
-        :param self:
-        :param channelGain_BS_CU:
-        :return:
-        SNR = Numerator / Denominator
-        Numerator = H_k * P_k
-        Denominator = N_0 * B_k
-        Datarate = B_k np.log2(1+Numerator/Denominator)
-        """
-        # print(f"Pn: {np.shape(self.P_n)} | H: {np.shape(channelGain_BS_CU)}")
-        # print(f"B: {np.shape(self.B)} | Tau: {np.shape(self.tau)} | sigma: {self.sigma}")
-        Numerator = ((channelGain_BS_CU))*self.P_n         # self.P must be a list among all users [1, ... , U]
-        Denominator = self.B * self.tau * self.sigma       # self.B must be a list among all users [1, ... , U]
 
-        DataRate = self.B * self.tau * np.log2(1+(Numerator/Denominator))
+        return None
 
-        # print(f"Numerator: {np.shape(Numerator)} | Denominator: {np.shape(Denominator)} | Datarate: {np.shape(DataRate)}")
-        # print(f"======================")
-        # print(f"tau: {self.tau}")
-        # print(f"======================")
-        # print(f"Deno: {self.sigma}"))
-        # print(f"======================"
-        # print(f"Datarate: {DataRate}")
-        # print(f"======================")
-        return DataRate
-
-    def _Time(self):
-        self.DataRate = self._calculateDataRate(self.ChannelGain.reshape(1, -1))
-        T = (self.o * self.tau) / self.DataRate
-        # print(f"Time: {T} - {np.sum(T)}")
-        return np.sum(T)
