@@ -10,8 +10,42 @@ from envs.env_agent_utils import *
 
 class base_env(rsma_utils, env_agent_utils):
     def __init__(self, args):
-        # Network setting
+        """ ========================================= """
+        """ =============     Network    ============ """
+        """ ========================================= """
+        # Number of antenna setting
+        # Number of users
+        # Bandwidth in (MHz)
 
+        # Noise power (dBm)
+        # Carrier Frequency (GHz) - 300 GHz
+        # Absorption Loss Coefficient Measured at 300 Ghz
+        # Antenna Gain of Tx
+        # Antenna Gain of Tx
+
+        # Radius of cell-in
+        # Radius of cell-out
+
+        # Power allocation
+        # Power allocation
+
+        # Rate common
+        # Rate private
+
+        # Threshold common
+        # Threshold private
+
+        # Imperfect SIC coefficient
+
+
+        """ ========================================= """
+        """ ========== Channel Realization ========== """
+        """ ========================================= """
+        # Channel Realization
+
+        # Random user-k location
+
+        # LSF * MAP part of channel hk
 
         # Power setting
 
