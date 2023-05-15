@@ -12,7 +12,8 @@ class base_agent:
     ):
         self.env = env
         self.model = alg
-
+        self.max_episode = args.max_episode
+        self.max_step    = args.max_step
 
 
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, np.float64, bool]:
@@ -29,8 +30,27 @@ class base_agent:
 
         return state_next, reward, done, info
 
+    def data_collect(self):
+        num_ep = self.max_episode
+        num_frames = self.max_step
+        self.total_step = 0
+        """Train the agent."""
+        for self.episode in range(1, num_ep + 1):
+            self.is_test = False
+
+            state = self.env.reset()
+
+            for step in range(1, num_frames + 1):
+                """ get channel in terms of state """
+                state, reward, done, info = self.env.step()
+                """  """
+
     def train(self):
+        # Get data from dataset
         pass
+        # Train-loader
+        # Loops over train-loader
+
 
     def evaluate(self):
         pass
