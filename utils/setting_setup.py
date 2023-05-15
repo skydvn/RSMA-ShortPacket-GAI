@@ -69,6 +69,17 @@ def get_arguments():
     parser.add_argument("--radius-out", type=float, default=10,
                         help="radius of cell-out")
 
+    parser.add_argument("--alloc-common", type=float, default=0.7,
+                        help="power allocation for common packet")
+
+    parser.add_argument("--rate-common", type=float, default=0.5,
+                        help="rate for common packet")
+    parser.add_argument("--rate-private", type=float, default=0.75,
+                        help="rate for private packet")
+
+
+
+
 
     """ ======================================================== """
     """ ===================== Agent config ===================== """
