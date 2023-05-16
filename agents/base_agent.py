@@ -12,7 +12,7 @@ class base_agent:
             env,
             alg
     ):
-        self.obs_dim = args.user_num
+        self.obs_dim = args.user_num*args.antenna_num
         self.env = env
         self.model = alg
         self.max_episode = args.max_episode
@@ -37,6 +37,7 @@ class base_agent:
 
         if not self.is_test:
             self.transition += [reward, state_next, done]
+            print(self.transition)
             self.memory.store(*self.transition)
 
         return state_next, reward, done, info
