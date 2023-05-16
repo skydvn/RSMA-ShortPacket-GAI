@@ -46,7 +46,7 @@ class base_agent:
         num_ep = self.max_episode
         num_frames = self.max_step
         self.total_step = 0
-        """Train the agent."""
+        """      Train the agent      """
         for self.episode in range(1, num_ep + 1):
             self.is_test = False
 
@@ -56,6 +56,9 @@ class base_agent:
                 """ get channel in terms of state """
                 selected_action = self.select_action(state)
                 state_next, reward, done, info = self.step()
+
+        """       Get data from memory buffer      """
+
 
     def train(self):
         # Get data from dataset
