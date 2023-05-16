@@ -1,8 +1,9 @@
-from GAI.LICE import *
+import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
 from utils.result_utils import *
-from Modules.buffer import *
+from agents.Modules.buffer import *
+from agents.GAI.LICE import *
 
 class base_agent:
     def __init__(
@@ -90,4 +91,3 @@ class base_agent:
             subplot(loc, title, values)
         plt.savefig(fname="result.pdf")
         plt.show()
-n
