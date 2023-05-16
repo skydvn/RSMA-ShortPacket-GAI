@@ -77,7 +77,9 @@ class base_env(rsma_utils, env_agent_utils):
         """     Environment Settings     """
         """ ============================ """
         self.rewardMatrix = np.array([])
-
+        """      Variable Initialization      """
+        self.m_k = 3            # 1->4
+        self.omega_k = 0.5      # 1
         self.cdf_sim_c = []
         self.cdf_sim_k = []
 
@@ -101,10 +103,6 @@ class base_env(rsma_utils, env_agent_utils):
         #     lk = np.exp(-np.mean(d_SUk*self.kabs))/\
         #          np.power(d_SUk,2)*np.power(self.lamda/4*np.pi(),2)\
         #          *self.G_Tx*self.G_Rx
-        #
-        #     """      Variable Initialization      """
-        #     self.m_k = 3            # 1->4
-        #     self.omega_k = 0.5      # 1
         #
         #
         #     # Precoding weights
@@ -154,7 +152,10 @@ class base_env(rsma_utils, env_agent_utils):
         # Distance calculation
         self.distance_CU_BS = self._distance_Calculated(self.BS_location, self.U_location)
 
+        # Nagakami Channel
+        self.G_nagakami = matrix_nakagami(shape=self.m_k, scale=self.omega_k, L=self.antenna_num, K=self.user_num)
 
+        state_next = self.G_nagakami
         return state_next
 
     def close(self):
