@@ -37,8 +37,8 @@ class base_env(rsma_utils, env_agent_utils):
         self.lamda = 3*1e8/self.carrier_freq    # Signal wavelength
         self.kabs = args.kabs                   # Absorption Loss Coefficient Measured at 300 Ghz
 
-        self.G_Tx = np.log10(args.tx_db)        # Antenna Gain of Tx
-        self.G_Rx = np.log10(args.rx_db)        # Antenna Gain of Rx
+        self.G_Tx = dB2pow(args.tx_db)        # Antenna Gain of Tx
+        self.G_Rx = dB2pow(args.rx_db)        # Antenna Gain of Rx
 
         self.beta_c = args.alloc_common         # Power allocation - common packet
         self.beta_k = (1-self.beta_c)\
@@ -77,7 +77,6 @@ class base_env(rsma_utils, env_agent_utils):
         """     Environment Settings     """
         """ ============================ """
         self.rewardMatrix = np.array([])
-        self.observation_space = self._wrapState().squeeze()
 
         self.cdf_sim_c = []
         self.cdf_sim_k = []
@@ -95,49 +94,40 @@ class base_env(rsma_utils, env_agent_utils):
 
         for user in range(self.user_num):
             d_SUk = self.distance_CU_BS[user]
-            for trial in range(self.trial):
-                # LSF * MAP part of channel hk
-                lk = np.exp(-np.mean(d_SUk*self.kabs))/np.power(d_SUk,2)
+            # LSF * MAP part of channel hk
+            lk = np.exp(-np.mean(d_SUk*self.kabs))/\
+                 np.power(d_SUk,2)*np.power(self.lamda/4*np.pi(),2)\
+                 *self.G_Tx*self.G_Rx
 
-                """      Variable Initialization      """
-                self.m_k = 3            # 1->4
-                self.omega_k = 0.5      # 1
+            """      Variable Initialization      """
+            self.m_k = 3            # 1->4
+            self.omega_k = 0.5      # 1
 
-                # Nagakami Channel
-                self.G_nagakami = np.linspace(scipy.stats.nakagami())   # integer
-                # Precoding weights
-                self.W_precoding = self.G_nagakami*np.linalg.inv(T_conjugate(self.G_nagakami)*self.G_nagakami)
-                """     P = [p1,p2,...,pK]      """
-                self.P_precoding = self.W_precoding*np.diag(np.linalg.norm(self.G_nagakami))
-                # Generate precoding weights for private message (Trial*L*1)
-                self.P_k = self.P_precoding[:,user]
-                # Generate precoding weight for common message (Trial*L*1)
-                self.P_c = np.concatenate((2,self.P_precoding),axis=0)*T_conjugate(np.ones((1,self.user_num)))
-                # Channel of user k (Trial,Antenna,1)
-                self.G_k = self.G_nagakami[:,user]
-                # Expect to channel norm - common |gk^h*pc|^2
-                self.gkhpc = np.power(np.abs(T_conjugate(self.G_k)*self.P_c),2)
-                # Expect to channel norm - private |gk^h*pk|^2
-                self.gkhpk = np.power(np.abs(T_conjugate(self.G_k)*self.P_k),2)
-                # Channel of other user j (L*(K-1))
-                G_j = self.G_nagakami   # temporary channel
-                G_j[:,user] = []           # remove channel of user k
+            # Nagakami Channel
+            self.G_nagakami = np.linspace(scipy.stats.nakagami(nu=self.m_k))   # integer
+            # Precoding weights
+            self.W_precoding = self.G_nagakami*np.linalg.inv(T_conjugate(self.G_nagakami)*self.G_nagakami)
+            """     P = [p1,p2,...,pK]      """
+            self.P_precoding = self.W_precoding*np.diag(np.linalg.norm(self.G_nagakami))
+            # Generate precoding weights for private message (Trial*L*1)
+            self.P_k = self.P_precoding[:,user]
+            # Generate precoding weight for common message (Trial*L*1)
+            self.P_c = np.concatenate((2,self.P_precoding),axis=0)*T_conjugate(np.ones((1,self.user_num)))
+            # Channel of user k (Trial,Antenna,1)
+            self.G_k = self.G_nagakami[:,user]
+            # Expect to channel norm - common |gk^h*pc|^2
+            self.gkhpc = np.power(np.abs(T_conjugate(self.G_k)*self.P_c),2)
+            # Expect to channel norm - private |gk^h*pk|^2
+            self.gkhpk = np.power(np.abs(T_conjugate(self.G_k)*self.P_k),2)
+            # Channel of other user j (L*(K-1))
+            G_j = self.G_nagakami   # temporary channel
+            G_j[:,user] = []           # remove channel of user k
 
-                # Channel interference vector of other user |gj^h*pk|^2
-                g_j = np.power(np.abs(T_conjugate(G_j)*self.P_k),2)
+            # Channel interference vector of other user |gj^h*pk|^2
+            g_j = np.power(np.abs(T_conjugate(G_j)*self.P_k),2)
+            print(self.G_k)
 
-                # SINR at user k
-                self.gamma_kc = self.beta_c*bar_gamma
-                self.gamma_kp = self.beta_k*bar_gamma
-
-            # cdf_sim_c & cdf_sim_k are the list
-            self.cdf_sim_c.append(1-count_sim_c[self.user_num]+1)
-            self.cdf_sim_k.append(1-count_sim_k[self.user_num]+1)
-
-
-        """     Re-calculate channel gain     """
-        self.ChannelGain = self._ChannelGain_Calculated()
-        state_next = self._wrapState()
+        next_state =
         """     Reward      """
         reward = None
 
@@ -162,11 +152,7 @@ class base_env(rsma_utils, env_agent_utils):
         # Distance calculation
         self.distance_CU_BS = self._distance_Calculated(self.BS_location, self.U_location)
 
-        # re-calculate channel gain
-        self.ChannelGain = self._ChannelGain_Calculated()
 
-        # Generate next state [set of ChannelGain]
-        state_next = self._wrapState()
         return state_next
 
     def close(self):
