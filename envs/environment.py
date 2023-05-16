@@ -90,7 +90,7 @@ class base_env(rsma_utils, env_agent_utils):
         self.distance_CU_BS = self._distance_Calculated(self.U_location, self.BS_location)
 
         idx_ptdb = 0
-        bar_gamma = dB2pow(self.PTdB(idx_ptdb))
+        bar_gamma = dB2pow(self.PTdB[idx_ptdb])
         count_sim_c = np.zeros((1,self.user_num))
         count_sim_k = np.zeros((1,self.user_num))
 
@@ -127,7 +127,7 @@ class base_env(rsma_utils, env_agent_utils):
         #     g_j = np.power(np.abs(T_conjugate(G_j)*self.P_k),2)
         #     print(self.G_k)
 
-        state_next = self.G_nagakami
+        state_next = self.G_nagakami.reshape(1,self.user_num*self.antenna_num)
         """     Reward      """
         reward = None
 
@@ -155,7 +155,8 @@ class base_env(rsma_utils, env_agent_utils):
         # Nagakami Channel
         self.G_nagakami = matrix_nakagami(shape=self.m_k, scale=self.omega_k, L=self.antenna_num, K=self.user_num)
 
-        state_next = self.G_nagakami
+        state_next = self.G_nagakami.reshape(1,self.user_num*self.antenna_num)
+
         return state_next
 
     def close(self):
