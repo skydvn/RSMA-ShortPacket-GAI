@@ -3,9 +3,11 @@ from utils.setting_setup import *
 import scipy
 
 class rsma_utils():
-    def __init__(self):
-        pass
+    def __init__(self, args):
 
+        """ ========================================= """
+        """ =============     Network    ============ """
+        """ ========================================= """
 
     def _location_BS_Generator(self):
         BS_location = [self.BS_x, self.BS_y]
@@ -15,7 +17,7 @@ class rsma_utils():
     def _location_CU_Generator(self):
         userList = []
         # hUser_temp = 1.65
-        for i in range(self.num_user):
+        for i in range(self.user_num):
             r = self.BS_R_Range * np.sqrt(np.random.rand()) + self.BS_R_min
             theta = np.random.uniform(-np.pi, np.pi)
             xUser_temp = self.BS_x + r * np.cos(theta)
@@ -27,7 +29,7 @@ class rsma_utils():
 
     def _trajectory_U_Generator(self):
         userList = []
-        for i in range(self.N_User):
+        for i in range(self.user_num):
             theta = 0
             theta = theta + np.pi / 360
             r = np.sin(theta)
