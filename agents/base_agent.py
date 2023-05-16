@@ -2,7 +2,6 @@ from GAI.LICE import *
 import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
 from utils.result_utils import *
-
 from Modules.buffer import *
 
 class base_agent:
@@ -12,7 +11,7 @@ class base_agent:
             env,
             alg
     ):
-        self.obs_dim = []
+        self.obs_dim = args.user_num
         self.env = env
         self.model = alg
         self.max_episode = args.max_episode
@@ -20,6 +19,13 @@ class base_agent:
         self.memory_size = args.memory_size
         self.batch_size  = args.batch_size
         self.memory = ReplayBuffer(self.obs_dim,self.memory_size,self.batch_size)
+        self.transition = list()
+
+    def select_action(self, state:np.ndarray)->np.ndarray:
+        """Select action from input state"""
+        selected_action = np.array([0])
+        self.transition = [state,selected_action]
+        return selected_action
 
     def step(self):
         """Take an action and return the response of the env."""
@@ -46,6 +52,7 @@ class base_agent:
 
             for step in range(1, num_frames + 1):
                 """ get channel in terms of state """
+                selected_action = self.select_action(state)
                 state_next, reward, done, info = self.step()
 
     def train(self):
