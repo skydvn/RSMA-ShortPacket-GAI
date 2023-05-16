@@ -54,8 +54,6 @@ def get_arguments():
                         help="signal bandwidth")
     parser.add_argument("--nfdb", type=float, default=6.5,
                         help="NFdB")
-    parser.add_argument("--", type=int, default=10,
-                        help="number of users")
     parser.add_argument("--carrier-freq", type=float, default=300*1e9,
                         help="carrier frequency in GHz (300 GHz)")
     parser.add_argument("--kabs", type=float, default=0.0033,
