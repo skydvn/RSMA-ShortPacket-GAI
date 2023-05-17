@@ -41,6 +41,7 @@ class ReplayBuffer:
         self.done_buf[self.ptr] = done
         self.ptr = (self.ptr + 1) % self.max_size
         self.size = min(self.size + 1, self.max_size)
+        # print(obs)
 
     def sample_batch(self): # -> Dict[str, np.ndarray]:
         """Randomly sample a batch of experiences from memory."""
