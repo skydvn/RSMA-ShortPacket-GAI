@@ -20,6 +20,6 @@ git clone https://github.com/skydvn/RSMA-ShortPacket-GAI.git
 
 # Training
 ```commandline
-python main.py 
+python main.py --flag-d-collect True --flag-train True --flag-eval False
 ```
 
