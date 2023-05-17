@@ -24,7 +24,6 @@ def get_arguments():
     parser.add_argument("--flag-eval", type=bool, default=False,
                         help="Trigger for evaluation")
 
-
     """ ======================================================== """
     """ ====================== Flag & name ===================== """
     """ ======================================================== """
@@ -101,5 +100,13 @@ def get_arguments():
                         help="max number of step per episode")
     parser.add_argument("--trial", type=int, default=1,
                         help="number of trial (samplings)")
+
+    # Learning Rates
+    parser.add_argument('--learning-rate', '-lr', default=1e-4, type=float, help='Learning rate')
+
+    # Hyperparams
+    parser.add_argument('--beta', default=1., type=float, help='Beta vae beta')
+    parser.add_argument('--capacity', default=None, type=float, help='KL Capacity')
+    parser.add_argument('--capacity-leadin', default=100000, type=int, help='KL capacity leadin')
 
     return parser.parse_args()
