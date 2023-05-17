@@ -19,14 +19,15 @@ class agent_utils:
             args.beta, args.capacity, args.capacity_leadin
         ).to(self.device)
         self.generative_opt = optim.Adam(self.generative_model.parameters(), lr=1e-3)
-
-    def update_model(self):
+        self.loss_fn = lambda x_hat, x: F.binary_cross_entropy_with_logits(x_hat.view(x_hat.size(0), -1),
+                                                                      x.view(x.size(0), -1), reduction='sum') / x.shape[0]
+    def update_model(self, t):
         """Update the model by gradient descent."""
         samples = self.memory.sample_batch()
         channel_g = torch.FloatTensor(samples["obs"]).to(self.device)
         true_precoder = torch.FloatTensor(samples["obs"]).to(self.device)
 
-        gai_loss = self.generative_model.train_step()
+        gai_loss = self.generative_model.main_step(channel_g, t, self.loss_fn)
 
         self.generative_opt.zero_grad()
         gai_loss.backward()
