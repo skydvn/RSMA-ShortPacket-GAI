@@ -6,7 +6,9 @@ from utils.result_utils import *
 from agents.modules.buffer import *
 from agents.modules.utils import *
 from agents.GAI.LICE import *
-from agents.
+from agents.GAI.GAN import *
+from agents.GAI.VAE import *
+from agents.GAI.AE import *
 
 class base_agent(agent_utils):
     def __init__(
@@ -107,7 +109,7 @@ class base_agent(agent_utils):
                 if (
                     len(self.memory)>=self.batch_size
                 ):
-                    g_loss = self.update_model()
+                    g_loss = self.update_model(step)
                     g_losses.append(g_loss)
 
                 # plotting
