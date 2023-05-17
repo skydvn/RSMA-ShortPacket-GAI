@@ -16,17 +16,19 @@ def print_hi(name):
 if __name__ == '__main__':
     args = get_arguments()
 
-    alg = VAE()
+    alg = None # VAE()
     env = base_env(args)
     agent = base_agent(args,
                        env,
                        alg)
 
     if args.flag_d_collect == True:
-        agent.data_collect()
+        print(args.flag_d_collect)
+        # agent.data_collect()
     if args.flag_train == True:
+        print(args.flag_train)
         # agent.train()
-        agent.instant_train(args)
+        agent.instant_train()
     if args.flag_eval == True:
         agent.evaluate()
 
