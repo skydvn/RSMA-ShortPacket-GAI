@@ -6,6 +6,7 @@ from utils.result_utils import *
 from agents.modules.buffer import *
 from agents.modules.utils import *
 from agents.GAI.LICE import *
+from agents.
 
 class base_agent(agent_utils):
     def __init__(
@@ -16,7 +17,7 @@ class base_agent(agent_utils):
     ):
         self.obs_dim = args.user_num*args.antenna_num
         self.env = env
-        self.model = alg
+        # self.model = VAE()      # alg
         self.max_episode = args.max_episode
         self.max_step    = args.max_step
         self.memory_size = args.memory_size
