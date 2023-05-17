@@ -45,6 +45,7 @@ def save_data(save_folder_name, data):
     # Create a dataset within the file and write the data
     with h5py.File(file, 'w') as hf:
         hf.create_dataset('train', data=data)
+        hf.create_dataset('test', data=data)
 
     # Close the file
     file.close()
