@@ -15,7 +15,7 @@ def save_results(
     if not os.path.exists(result_path):
         os.makedirs(result_path)
 
-    if len(scores):
+    if len(g_losses):
         file_path = result_path + "{}.h5".format(algo)
         print("File path: " + file_path)
 
