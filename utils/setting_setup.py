@@ -84,6 +84,9 @@ def get_arguments():
     """ ======================================================== """
     """ ===================== Agent config ===================== """
     """ ======================================================== """
+    parser.add_argument("--algo", type=str, default="LICE",
+                        help="name of algorithm")
+
     parser.add_argument("--memory-size", type=int, default=100000,
                         help="size of the replay memory")
     parser.add_argument("--batch-size", type=int, default=128,
