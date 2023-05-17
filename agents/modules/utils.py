@@ -8,20 +8,25 @@ from agents.GAI.VAE import *
 from agents.GAI.GAN import *
 
 class agent_utils:
-    def __init__(self):
-        self.generative_model = LICE().to(self.device)
+    def __init__(self, args):
+        self.generative_model = VAE(
+            NaiveEncoder(input_dim=args.user_num*args.antenna_num,
+                         hidden_dim=args.user_num*args.antenna_num/2,
+                         latent_dim=args.user_num*args.antenna_num/4),
+            NaiveDecoder(latent_dim=args.user_num*args.antenna_num/4,
+                         hidden_dim=args.user_num*args.antenna_num/2,
+                         output_dim=args.user_num*args.antenna_num),
+            args.beta, args.capacity, args.capacity_leadin
+        ).to(self.device)
         self.generative_opt = optim.Adam(self.generative_model.parameters(), lr=1e-3)
 
     def update_model(self):
         """Update the model by gradient descent."""
-        device = self.device  # for shortening the following lines
-
         samples = self.memory.sample_batch()
-        channel_g = torch.FloatTensor(samples["obs"]).to(device)
-        true_precoder = torch.FloatTensor(samples["next_obs"]).to(device)
+        channel_g = torch.FloatTensor(samples["obs"]).to(self.device)
+        true_precoder = torch.FloatTensor(samples["obs"]).to(self.device)
 
-        pred_precoder = self.generative_model(channel_g)
-        gai_loss = F.mse_loss(pred_precoder, true_precoder)
+        gai_loss = self.generative_model.train_step()
 
         self.generative_opt.zero_grad()
         gai_loss.backward()
