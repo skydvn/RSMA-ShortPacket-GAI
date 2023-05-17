@@ -95,7 +95,8 @@ class base_env(rsma_utils, env_agent_utils):
         count_sim_k = np.zeros((1,self.user_num))
 
         # Nagakami Channel
-        self.G_nagakami = matrix_nakagami(shape=self.m_k, scale=self.omega_k, L=self.antenna_num, K=self.user_num)
+        self.G_nagakami = matrix_nakagami(shape=self.m_k, scale=self.omega_k,
+                                          L=self.antenna_num, K=self.user_num)
 
         # for user in range(self.user_num):
         #     d_SUk = self.distance_CU_BS[user]
@@ -153,12 +154,10 @@ class base_env(rsma_utils, env_agent_utils):
         self.distance_CU_BS = self._distance_Calculated(self.BS_location, self.U_location)
 
         # Nagakami Channel
-        self.G_nagakami = matrix_nakagami(shape=self.m_k, scale=self.omega_k, L=self.antenna_num, K=self.user_num)
-
-        state_next = self.G_nagakami.reshape(1,self.user_num*self.antenna_num)
-
-        return state_next
-
+        self.G_nagakami = matrix_nakagami(shape=self.m_k, scale=self.omega_k,
+                                          L=self.antenna_num, K=self.user_num)
+        state = self.G_nagakami.reshape(1, self.user_num * self.antenna_num)
+        return state
     def close(self):
         pass
 
