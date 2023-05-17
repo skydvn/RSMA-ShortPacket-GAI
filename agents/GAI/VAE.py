@@ -10,7 +10,6 @@ class NaiveEncoder(nn.Module):
 
     def __init__(self, input_dim, hidden_dim, latent_dim):
         super(NaiveEncoder, self).__init__()
-
         self.FC_input = nn.Linear(input_dim, hidden_dim)
         self.FC_input2 = nn.Linear(hidden_dim, hidden_dim)
         self.FC_mean = nn.Linear(hidden_dim, latent_dim)
@@ -23,10 +22,12 @@ class NaiveEncoder(nn.Module):
     def forward(self, x):
         h_ = self.LeakyReLU(self.FC_input(x))
         h_ = self.LeakyReLU(self.FC_input2(h_))
+        h_ = self.LeakyReLU(self.FC_input2(h_))
+        h_ = self.LeakyReLU(self.FC_input2(h_))
         mean = self.FC_mean(h_)
         log_var = self.FC_var(h_)  # encoder produces mean and log of variance
         #             (i.e., parateters of simple tractable normal distribution "q"
-        outs = torch.cat(mean + log_var, dim=-1)
+        outs = torch.cat((mean,log_var), dim=-1)
         return outs
 
 
@@ -40,10 +41,12 @@ class NaiveDecoder(nn.Module):
         self.LeakyReLU = nn.LeakyReLU(0.2)
 
     def forward(self, x):
-        h = self.LeakyReLU(self.FC_hidden(x))
+        h = torch.sigmoid(self.FC_hidden(x))
+        h = torch.sigmoid(self.FC_hidden2(h))
+        h = self.LeakyReLU(self.FC_hidden2(h))
         h = self.LeakyReLU(self.FC_hidden2(h))
 
-        x_hat = torch.sigmoid(self.FC_output(h))
+        x_hat = self.FC_output(h)
         return x_hat
 
 
@@ -95,21 +98,20 @@ class VAE(Module):
 
     def main_step(self, batch, batch_nb, loss_fn):
 
-        x, y = batch
-
+        x = batch
+        y = 0
         mu, lv = self.unwrap(self.encode(x))
         z = self.reparameterize(mu, lv)
         x_hat = self.decode(z)
-
         loss = loss_fn(x_hat, x)
         total_kl = self.compute_kl(mu, lv, mean=False)
         beta_kl = self.control_capacity(total_kl, self.global_step, self.anneal)
         state = self.make_state(batch_nb, x_hat, x, y, mu, lv, z)
         self.global_step += 1
-
+        e_loss = F.mse_loss(x_hat,x)
         tensorboard_logs = {'metric/loss': loss+beta_kl, 'metric/recon_loss': loss, 'metric/total_kl': total_kl,
                             'metric/beta_kl': beta_kl}
-        return {'loss': loss+beta_kl, 'out': tensorboard_logs, 'state': state}
+        return {'loss': e_loss+0.2*total_kl, 'e-loss': e_loss, 'out': tensorboard_logs, 'state': state}
 
     def compute_kl(self, mu, lv, mean=False):
         total_kl, dimension_wise_kld, mean_kld = gaussian_kls(mu, lv, mean)
