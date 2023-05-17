@@ -17,6 +17,9 @@ class base_agent(agent_utils):
             env,
             alg
     ):
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu"
+         )
         self.obs_dim = args.user_num*args.antenna_num
         self.env = env
         # self.model = VAE()      # alg
@@ -24,16 +27,26 @@ class base_agent(agent_utils):
         self.max_step    = args.max_step
         self.memory_size = args.memory_size
         self.batch_size  = args.batch_size
-        self.memory = ReplayBuffer(self.obs_dim,self.memory_size,self.batch_size)
+        self.memory = ReplayBuffer(self.obs_dim, 1, self.memory_size,self.batch_size)
         self.transition = list()
         """     Agent     """
-        self.plotting_interval = args.plotting_interval
+        self.plot_interval = args.plot_interval
         self.save_flag = args.save_flag
         self.algo_name = args.algo
         """     Agent     """
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu"
-         )
+        self.generative_model = VAE(
+            NaiveEncoder(input_dim=args.user_num * args.antenna_num,
+                         hidden_dim=int(args.user_num * args.antenna_num / 2),
+                         latent_dim=int(args.user_num * args.antenna_num / 4)),
+            NaiveDecoder(latent_dim=int(args.user_num * args.antenna_num / 4),
+                         hidden_dim=int(args.user_num * args.antenna_num / 2),
+                         output_dim=args.user_num * args.antenna_num),
+            args.beta, args.capacity, args.capacity_leadin
+        ).to(self.device)
+        self.generative_opt = optim.Adam(self.generative_model.parameters(), lr=1e-3)
+        self.loss_fn = lambda x_hat, x: F.binary_cross_entropy_with_logits(x_hat.view(x_hat.size(0), -1),
+                                                                           x.view(x.size(0), -1), reduction='sum') / \
+                                        x.shape[0]
 
     def select_action(self, state:np.ndarray)->np.ndarray:
         """Select action from input state"""
@@ -50,7 +63,7 @@ class base_agent(agent_utils):
 
         if not self.is_test:
             self.transition += [reward, state_next, done]
-            print(self.transition)
+            # print(self.transition)
             self.memory.store(*self.transition)
 
         return state_next, reward, done, info
@@ -87,44 +100,46 @@ class base_agent(agent_utils):
         # Loops over train-loader
 
     def instant_train(self):
-        plotting_interval = self.plotting_interval
+        plot_interval = self.plot_interval
         num_ep = self.max_episode
         num_frames = self.max_step
         self.total_step = 0
         """     Log initialization    """
         g_losses = []
+        eval_losses = []
 
         """      Train the agent      """
         for self.episode in range(1, num_ep + 1):
             self.is_test = False
 
             state = self.env.reset()
-
+            print(f"episode:{self.episode}-{len(self.memory)}")
             for step in range(1, num_frames + 1):
+                self.total_step+=1
                 """ get channel in terms of state """
                 selected_action = self.select_action(state)
                 state_next, reward, done, info = self.step()
-
+                state = state_next
                 # if training is ready
                 if (
-                    len(self.memory)>=self.batch_size
+                    len(self.memory)>=self.batch_size*500
                 ):
-                    g_loss = self.update_model(step)
-                    g_losses.append(g_loss)
-
+                    gloss,eloss = self.update_model(step)
+                    g_losses.append(gloss)
+                    eval_losses.append(eloss)
                 # plotting
-                if self.total_step % plotting_interval==0:
-                    self._plot(
-                        self.total_step,
-                        g_losses,
-                        [],
-                        [],
-                    )
-                    pass
+                # if self.total_step % plot_interval==0:
+                #     self._plot(
+                #         self.total_step,
+                #         g_losses,
+                #         [],
+                #         [],
+                #     )
+                #     pass
         if self.save_flag:
             save_results(
                 g_losses,
-                [],
+                eval_losses,
                 [],
                 [],
                 self.algo_name
