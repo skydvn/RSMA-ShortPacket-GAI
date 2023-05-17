@@ -25,7 +25,8 @@ if __name__ == '__main__':
     if args.flag_d_collect == True:
         agent.data_collect()
     if args.flag_train == True:
-        agent.train()
+        # agent.train()
+        agent.instant_train(args)
     if args.flag_eval == True:
         agent.evaluate()
 
