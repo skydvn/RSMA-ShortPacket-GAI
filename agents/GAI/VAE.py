@@ -111,7 +111,7 @@ class VAE(Module):
         e_loss = F.mse_loss(x_hat,x)
         tensorboard_logs = {'metric/loss': loss+beta_kl, 'metric/recon_loss': loss, 'metric/total_kl': total_kl,
                             'metric/beta_kl': beta_kl}
-        return {'loss': e_loss+0.2*total_kl, 'e-loss': e_loss, 'out': tensorboard_logs, 'state': state}
+        return {'loss': e_loss+beta_kl, 'e-loss': e_loss, 'out': tensorboard_logs, 'state': state}
 
     def compute_kl(self, mu, lv, mean=False):
         total_kl, dimension_wise_kld, mean_kld = gaussian_kls(mu, lv, mean)
