@@ -36,10 +36,10 @@ class base_agent(agent_utils):
         """     Agent     """
         self.generative_model = VAE(
             NaiveEncoder(input_dim=args.user_num * args.antenna_num,
-                         hidden_dim=int(args.user_num * args.antenna_num / 2),
-                         latent_dim=int(args.user_num * args.antenna_num / 4)),
-            NaiveDecoder(latent_dim=int(args.user_num * args.antenna_num / 4),
-                         hidden_dim=int(args.user_num * args.antenna_num / 2),
+                         hidden_dim=int(args.user_num * args.antenna_num / 1),
+                         latent_dim=int(args.user_num * args.antenna_num / 2)),
+            NaiveDecoder(latent_dim=int(args.user_num * args.antenna_num / 2),
+                         hidden_dim=int(args.user_num * args.antenna_num / 1),
                          output_dim=args.user_num * args.antenna_num),
             args.beta, args.capacity, args.capacity_leadin
         ).to(self.device)
@@ -122,7 +122,7 @@ class base_agent(agent_utils):
                 state = state_next
                 # if training is ready
                 if (
-                    len(self.memory)>=self.batch_size*500
+                    len(self.memory)>=self.batch_size*50
                 ):
                     gloss,eloss = self.update_model(step)
                     g_losses.append(gloss)
